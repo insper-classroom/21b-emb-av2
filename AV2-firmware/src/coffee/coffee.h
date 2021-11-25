@@ -30,6 +30,11 @@
 #define TEMP_RAMP_UP 5
 #define TEMP_RAMP_DOWN 3
 
+#define LED_PIO      PIOC
+#define LED_PIO_ID   ID_PIOC
+#define LED_IDX      8
+#define LED_IDX_MASK (1 << LED_IDX)
+
 /************************************************************************/
 /* FUNCTIONS                                                            */
 /************************************************************************/
