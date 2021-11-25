@@ -15,6 +15,12 @@ Leia atentamente as informações a seguir:
 
 :triangular_flag_on_post: **Ao finalizar a entrega preencher o formulário (uma única vez!):**
 
+https://docs.google.com/forms/d/e/1FAIpQLSfh8Cnc7djWaZ2nmf0ngAfRCuQnj2WnINXu8P4Chsb3GY2GJQ/viewform
+
+Acessar a avaliacao pelo link:
+
+https://classroom.github.com/a/jVdEb6Lh
+
 ## Descrição
 
 Nesta entrega vocês irão desenvolver um controlador para uma máquina de café expresso! O sistema possui dois botões para o usuário selecionar a quantidade de café: Simples ou Duplo. A ideia aqui é controlar o quanto de café será feito através do tempo na qual a bomba da máquina fica ligada.
@@ -157,6 +163,12 @@ Requisitos funcionais (resumo):
 - Só permitir que o café seja feito com a água no mínimo 80C.
 
 Assista ao vídeo no youtube para ver o comportamento da máquina:
+
+https://www.youtube.com/watch?v=_0tqHtVparQ
+
+E de onde veio a ideia original:
+
+https://www.youtube.com/watch?v=JsnlxMmlMTg
 
 Requisitos técnicos:
 
