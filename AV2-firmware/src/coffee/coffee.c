@@ -21,12 +21,13 @@ static void config_DAC(void) {
 
 void coffe_pump_on(void) {
 	printf("[PUMP] ON \n");
+	pio_clear(LED_PIO, LED_IDX_MASK);
 	pump_on = 1;
-	
 }
 
 void coffe_pump_off(void) {
 	printf("[PUMP] OFF \n");
+	pio_set(LED_PIO, LED_IDX_MASK);
 	pump_on = 0;
 }
 
@@ -53,6 +54,9 @@ void task_av2(void *pvParameters) {
   int temperature = TEMP_MIN;
   
   config_DAC();
+  
+  pmc_enable_periph_clk(LED_PIO_ID);
+  pio_configure(LED_PIO, PIO_OUTPUT_1, LED_IDX_MASK, PIO_DEFAULT);
 
   for (;;)  {
 	  

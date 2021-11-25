@@ -61,7 +61,7 @@ A temperatura do reservatório é gerada no pino DAC0, para ler o valor você de
   |----------|    temperatura
   |     dac0 |------->|
   |          |        |
-  |     afec |<-------| ligar com jump!
+  |  afec0 0 |<-------| ligar com jump!
   |----------|
 ```
 
@@ -86,33 +86,68 @@ Ao fazer o café a temperatura da água irá baixar, por conta disso você não 
 
 #### Tipos de café 
 
-A máquina deve produzir dois tipos de café: Simples e Duplo, a diferença entre eles é: o botão que ativa o modo, o tempo na qual o café a bomba ficará ligado e o LED que irá piscar quando o café estiver sendo feito.
+A máquina deve produzir dois tipos de café: Simples e Duplo, a diferença entre eles é: o botão que ativa o modo, o tempo na qual o café a bomba ficará ligada.
 
 | Modo    | Botão  | LED    | Tempo |
 |---------|--------|--------|-------|
-| Simples | OLED 1 | OLED 1 |  5s   |
-| Simples | OLED 1 | OLED 1 |  10s  |
+| Simples | BTN 1 | LED 1 |  5s   |
+| Duplo   | BTN 2 | LED 2 |  10s  |
 
-#### LEDs
+#### OLED
 
-Os LEDS referentes a cada botão devem se comportar da seguinte maneira:
+Você deve exibir no OLED as seguintes informações:
 
-- Piscar enquanto a temperatura da máquina não chegou em 80 C
-- Devem ficar acesos para indicar que a máquina está pronta para fazer um café.
-- O LED do modo selecionado deve piscar enquanto estiver produzindo café, os demais devem manter apagado.
+- Estado da cafeteira: Aquecendo/ Pronta para fazer café/ Fazendo café
+- Quando tiver fazendo café indicar o modo selecionado (Simples/ Duplo)
  
+> TIP: Isso serve para ajudar vocês na implementação!
+
 #### Comportamento
 
-Ao ligar a máquina (placa energizada) o sistema deve começar a aquecer a água e bloquear qualquer ação do usuário de fazer café até a temperatura atingir 80C, enquanto isso todos os LEDs devem piscar, indicando que o aquecimento da água.
+Ao ligar a máquina (placa energizada) o sistema deve começar a aquecer a água e bloquear qualquer ação do usuário de fazer café até a temperatura atingir 80C, enquanto isso vocês devem exibir **Aquecendo** no OLED.
 
-Com a água atingido a temperatura certa, os LEDs devem ficar acesos e a máquina já pode começar fazer café. Quando um dos modos forem selecionados lembrar de ligar a bomba e deixar ela ligada pelo tempo definido.
+Com a água atingido a temperatura certa você deve exibir **Pronta** no OLED e a máquina já pode aceitar um pedido de café. Quando um dos modos forem selecionados lembrar de ligar a bomba e deixar ela ligada pelo tempo definido (5s ou 10s), ao acabar o tempo desligar a bomba!. 
+
+- Vocês devem utilizar RTT para medir o tempo (5s ou 10s);
+- Usem os recursos do RTOS para comunicar Handler / Task
+
+Quando selecionado um modo de operação lembrar de exibir no OLED: **Simples** ou **Duplo**. A comunicação dos botões com a task também deve ser feita com recursos do RTOS.
 
 Após acabar o processo de fazer café, o sistema deve verificar a temperatura da água antes de permitir que um novo café seja feito (a passagem da água esfria 'a água na câmara).
 
 :bangbang: A máquina só deve liberar para fazer café quando a temperatura da água atingir pelo menos 80°C.
 
-## C
+### Código fornecido
 
+O código fornecido tem uma task oculta (`xTaskCreate(task_av2,....`) que emula a máquina de café real, você não deve mexer nessa função! Para ajudar vocês eu imprimo um log da máquina no terminal, que contém informações sobre a temperatura, aquecimento e bomba.
+
+```
+[PUMP] ON 
+[TEMP] 87, [HEAT] 1, [PUMP] 1 
+[TEMP] 84, [HEAT] 1, [PUMP] 1 
+[TEMP] 81, [HEAT] 1, [PUMP] 1 
+[TEMP] 78, [HEAT] 1, [PUMP] 1 
+[TEMP] 75, [HEAT] 1, [PUMP] 1 
+[TEMP] 72, [HEAT] 1, [PUMP] 1 
+```
+
+### Dicas
+
+1. Usem o terminal para debugar
+1. Usem breakpoint!
+1. Antes de qualquer coisa, comecem aquecer a água! Lembrem que o individuo é necessitado de café!
+1. Façam toda implementação na task_oled
+1. Implementem por parte:
+    - leitura analógica (com fila, ou semáforo!!)
+    - conversão de ADC para célcios (cuidado os tipos de variável)
+1. Lógica dos botões
+    - com fila ou semáforo!
+1. Lógica de controle da bomba 
+    - lembrem do RTT!
+1. A cada etapa lembrem de atualizar o OLED com as informações! Isso vai ajudar vocês
+1. Testem sempre e bastante! Apertem o botão enquanto estiver aquecendo... nada pode acontecer! 
+
+## C
 
 Requisitos funcionais (resumo):
 
@@ -126,24 +161,33 @@ Assista ao vídeo no youtube para ver o comportamento da máquina:
 Requisitos técnicos:
 
 - Usar RTT para calcular o tempo que a bomba vai ficar ligada.
-- Usar TC para piscar os LEDs.
 - Usar AFEC para leitura da temperatura.
 - Usar fila e semáforos para troca de dados.
 
-## B - stand-by
+## C+ - stand-by
 
 Identificar quando a máquina está inativa (20 segundos sem uso) e desligar o aquecimento da água e desligar os LEDs entrando em modo stand-by. Quando qualquer botão for apertado ligar novamente a máquina (com o mesmo comportamento de quando ela é ligada pela primeira vez).
 
 > Enquanto em stand-by os LEDs devem ficar apagados
 
-## B - oled
+## B - Pisca os LEDs
 
-Exibir no OLED informações sobre a feitura do café:
+Os LEDS referentes a cada botão devem se comportar da seguinte maneira:
 
-  - modo de café selecionado
-  - temperatura atual da água 
-  - barra de progresso de quando estiver fazendo café.
+- Piscar todos os LEDS enquanto a temperatura da máquina não chegou em 80 C
+- Ao chegar na temperatura mínima manter os LEDs acessos para indicar que a máquina está pronta para fazer um café.
+- Quando estiver produzindo um café o LED do modo selecionado deve piscar enquanto estiver produzindo café, os demais devem manter apagado.
+
+Implementa a parte de piscar os LEDs quando estiver aguardando o aquecimento da bomba e quando tiver fazendo um café.
+
+- Usar TC para piscar os LEDs.
+
+## B+ - Barra de progrssso
+
+Exibir no OLED uma barra de progresso enquanto estiver fazendo o café. 
 
 ## A - Tempo
 
 Possibilitar que o usuário altere o tempo de cada tipo de café (Simples, Duplo). Se o usuário apertar e manter o botão pressionado o tempo na qual ele manteve o botão pressionado deve ser a nova base de tempo para o modo em questão. Enquanto o botão estiver pressionado lembre de ligar a bomba, e quando soltar desligar!
+
+Exiba o novo tempo no OLED para facilitar o debug!
